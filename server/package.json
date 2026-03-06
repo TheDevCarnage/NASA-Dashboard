@@ -5,7 +5,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "nodemon src/server.js",
-    "start": "set PORT=5000&& node src/server.js"
+    "start": "set PORT=5000&& node src/server.js",
+    "cluster": "pm2 start src/server.js -i max"
   },
   "keywords": [],
   "author": "",
@@ -15,7 +16,8 @@
     "cors": "^2.8.6",
     "csv-parse": "^6.1.0",
     "express": "^5.2.1",
-    "morgan": "^1.10.1"
+    "morgan": "^1.10.1",
+    "pm2": "^6.0.14"
   },
   "devDependencies": {
     "eslint": "^9.39.3",
