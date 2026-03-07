@@ -1,44 +1,37 @@
 const { 
     getAllLaunches,
-    addNewLaunch,
+    scheduleNewLaunch,
     existsLaunchWithId,
     abortLaunchWithId,
  } = require("../../models/launches.models");
 
-function httpGetAllLaunches(req, res) {
-    return res.status(200).json(getAllLaunches());
+
+async function httpGetAllLaunches(req, res) {
+    const launches = await getAllLaunches()
+    return await res.status(200).json(launches);
 }
 
-function httpAddNewLaunch(req, res){
+async function httpAddNewLaunch(req, res){
     const launch = req.body
-    if ( 
-        !launch.mission || !launch.rocket || 
-        !launch.launchDate || !launch.target
-    ){
-        return res.status(400).json({
-            "error": "Missing required fields in launch body!"
-        })
+    try{
+        await scheduleNewLaunch(launch)
+    } catch(err){
+        console.error('Failed to save launch')
     }
-    launch.launchDate = new Date(launch.launchDate) 
-    if (launch.launchDate.toString() === "Invalid Date" || isNaN(launch.launchDate)){
-        return res.status(400).json({
-            "error": "Invalid date formatt in launch body!"
-        })
-    }
-    addNewLaunch(launch)
     return res.status(201).json(launch)
 }
 
 
-function httpAbortLaunch(req, res){
+async function httpAbortLaunch(req, res){
     const launchId = req.params.id
-    if (!existsLaunchWithId(launchId)){
+    const exists = await existsLaunchWithId(launchId) 
+    if (!exists){
         return res.status(404).json({
             "error": "Launch with this id doesn't exists."
         })
     }
 
-    const aborted = abortLaunchWithId(launchId)
+    const aborted = await abortLaunchWithId(launchId)
     return res.status(200).json(aborted)
 }
 
